@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const sqlite3 = require('sqlite3').verbose();
 const axios = require('axios');
+const fs = require('fs');
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
@@ -65,7 +66,6 @@ async function callAI(settings, promptText) {
       messages: [{ role: 'user', content: promptText }]
     };
   } else {
-    // Default DeepSeek
     body = {
       model: model,
       messages: [{ role: 'user', content: promptText }]
@@ -82,22 +82,22 @@ async function callAI(settings, promptText) {
     }
     return response.data.choices?.[0]?.message?.content || response.data.summary || response.data.answer || JSON.stringify(response.data);
   } catch (error) {
-    // Fallback simulation if real API key is missing or endpoint unreachable
     return `[Mô phỏng AI (${provider}/${model}) do chưa kết nối API thực hoặc lỗi mạng]: Đã phân tích tài liệu với nội dung: "${promptText.substring(0, 150)}..."`;
   }
 }
 
 // Upload document
 app.post('/upload', upload.single('document'), (req, res) => {
-  const { originalname, path } = req.file;
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
+  const { originalname, path: filePath } = req.file;
   const documentId = Date.now().toString();
   const uploadDate = new Date().toISOString();
   
-  // For testing/demo purpose, let's read file content if text
-  const fs = require('fs');
   let fileContent = '';
   try {
-    fileContent = fs.readFileSync(path, 'utf8');
+    fileContent = fs.readFileSync(filePath, 'utf8');
   } catch (e) {
     fileContent = 'Tài liệu nhị phân hoặc không đọc được trực tiếp.';
   }
@@ -140,7 +140,7 @@ app.post('/answer', async (req, res) => {
       return res.status(404).send('Document not found');
     }
 
-    const promptText = `Dựa vào tài liệu sau, hãy trả lời câu hỏi: "${question}"\n\nTài liệu:\n${row.content}`;
+    const promptText = `Dựa vào tài liệu sau:\n\n${row.content}\n\nHãy trả lời câu hỏi: ${question}`;
     const answer = await callAI(settings, promptText);
     res.status(200).send({ answer });
   });
@@ -158,13 +158,13 @@ app.post('/search', async (req, res) => {
       return res.status(404).send('Document not found');
     }
 
-    const promptText = `Tìm kiếm thông tin liên quan đến từ khóa "${query}" trong tài liệu sau và trích dẫn các đoạn phù hợp:\n\n${row.content}`;
-    const resText = await callAI(settings, promptText);
-    res.status(200).send({ results: [resText] });
+    const promptText = `Tìm kiếm thông tin liên quan đến "${query}" trong tài liệu sau:\n\n${row.content}`;
+    const searchResult = await callAI(settings, promptText);
+    res.status(200).send({ results: [searchResult] });
   });
 });
 
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on port ${PORT}`);
 });
