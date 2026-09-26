@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Document Assistant</title>
+  <link rel="stylesheet" href="styles.css">
+<style>.paf-made-by{position:fixed;right:8px;bottom:8px;width:min(72px,12vw);max-width:12vw;height:auto;object-fit:contain;opacity:.5;background:transparent;padding:0;border:0;box-shadow:none;filter:none;pointer-events:none;z-index:30}</style></head>
+<body>
+  <div class="container">
+    <h1>AI Document Assistant</h1>
+    
+    <div class="sidebar">
+      <div class="settings-section">
+        <h3>AI Provider & Model</h3>
+        <div class="form-group">
+          <label for="providerSelect">Provider:</label>
+          <select id="providerSelect">
+            <option value="deepseek">DeepSeek</option>
+            <option value="openai">OpenAI</option>
+            <option value="anthropic">Anthropic</option>
+            <option value="ollama">Ollama (Local AI)</option>
+            <option value="custom">Custom Endpoint</option>
+          </select>
+        </div>
+        <div class="form-group" id="endpointGroup" style="display:none;">
+          <label for="customEndpoint">API Endpoint / Base URL:</label>
+          <input type="text" id="customEndpoint" placeholder="http://localhost:11434">
+        </div>
+        <div class="form-group">
+          <label for="apiKeyInput">API Key:</label>
+          <input type="password" id="apiKeyInput" placeholder="sk-...">
+        </div>
+        <div class="form-group">
+          <label for="modelInput">Model Name:</label>
+          <input type="text" id="modelInput" placeholder="deepseek-chat" value="deepseek-chat">
+        </div>
+      </div>
+
+      <div class="upload-section">
+        <h3>Tải lên tài liệu</h3>
+        <input type="file" id="documentUpload" accept=".txt,.pdf,.doc,.docx">
+        <button id="uploadButton">Upload Document</button>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="features-section">
+        <h3>Thao tác phân tích</h3>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button id="summarizeButton">Summarize</button>
+          <button id="answerButton">Answer Question</button>
+          <button id="searchButton">Search Information</button>
+        </div>
+      </div>
+      <div class="result-section">
+        <h3>Kết quả phân tích</h3>
+        <div id="result">Kết quả hiển thị tại đây...</div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+
+<img class="paf-made-by" src="/made-by.png" alt="Made with App Builder — Pi SoloHost"></body>
+</html>

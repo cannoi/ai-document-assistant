@@ -1,0 +1,7 @@
+title: "AI Document Assistant"
+eyebrow: SoloHost App
+description: "tạo cho tôi App : AI Document Assistant     AI đọc và phân tích tài liệu, hỗ trợ tóm tắt, hỏi đáp và tìm thông tin trong tài liệu."
+footer_hint: Ready to run on Pi Desktop SoloHost.
+output_file: .env
+after_save: Saved. Start the app from SoloHost.
+fields: []
